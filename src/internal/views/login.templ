@@ -1,9 +1,11 @@
 package views
 
 templ Login() {
-	<form hx-post="/auth/login">
-		<input type="email" name="email" placeholder="Email" class="w-full p-2 border-2 border-gray-200 rounded-lg"/>
-		<input type="password" name="password" placeholder="Password" class="w-full p-2 border-2 border-gray-200 rounded-lg"/>
-		<button type="submit" class="w-full p-2 bg-blue-500 text-white rounded-lg">Login</button>
-	</form>
+	@Layout() {
+		<form hx-post="/auth/login">
+			<input type="email" name="email" placeholder="Email" class="w-full p-2 border-2 border-gray-200 rounded-lg"/>
+			<input type="password" name="password" placeholder="Password" class="w-full p-2 border-2 border-gray-200 rounded-lg"/>
+			<button type="submit" class="w-full p-2 bg-blue-500 text-white rounded-lg">Login</button>
+		</form>
+	}
 }

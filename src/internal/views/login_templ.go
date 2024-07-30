@@ -26,7 +26,25 @@ func Login() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/auth/login\"><input type=\"email\" name=\"email\" placeholder=\"Email\" class=\"w-full p-2 border-2 border-gray-200 rounded-lg\"> <input type=\"password\" name=\"password\" placeholder=\"Password\" class=\"w-full p-2 border-2 border-gray-200 rounded-lg\"> <button type=\"submit\" class=\"w-full p-2 bg-blue-500 text-white rounded-lg\">Login</button></form>")
+		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/auth/login\"><input type=\"email\" name=\"email\" placeholder=\"Email\" class=\"w-full p-2 border-2 border-gray-200 rounded-lg\"> <input type=\"password\" name=\"password\" placeholder=\"Password\" class=\"w-full p-2 border-2 border-gray-200 rounded-lg\"> <button type=\"submit\" class=\"w-full p-2 bg-blue-500 text-white rounded-lg\">Login</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return templ_7745c5c3_Err
+		})
+		templ_7745c5c3_Err = Layout().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

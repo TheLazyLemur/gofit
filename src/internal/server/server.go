@@ -46,7 +46,9 @@ func MountRoutes(s *Server) {
 
 	s.r.Group(func(r *router.Router) {
 		r.Use(AuthMaybeRequiredMW(s.deps))
+
 		r.Get("/", handlers.HandleIndex())
+		r.Get("/measure", handlers.HandleMeasure(s.deps))
 	})
 }
 

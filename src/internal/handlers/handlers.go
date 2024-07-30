@@ -117,3 +117,18 @@ func HandleSignupForm(d dependencies) http.HandlerFunc {
 		w.Header().Set("HX-Redirect", "/")
 	}
 }
+
+func HandleMeasure(deps dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, ok := r.Context().Value("user").(db.User)
+		if !ok {
+			w.Header().Set("HX-Redirect", "/auth/login")
+			return
+		}
+
+		if err := views.Measure().Render(r.Context(), w); err != nil {
+			slog.Error(err.Error())
+			return
+		}
+	}
+}
