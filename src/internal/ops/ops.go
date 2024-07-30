@@ -35,9 +35,25 @@ func CreateUser(ctx context.Context, d dependencies, username, password, email s
 		return "", err
 	}
 
+	return createSession(ctx, d.Querier(), tx, userID)
+}
+
+func LoginUser(ctx context.Context, d dependencies, email, password string) (string, error) {
+	user, err := d.Querier().GetUserByEmailAndPassword(ctx, d.DBC(), db.GetUserByEmailAndPasswordParams{
+		Email:        email,
+		PasswordHash: password,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return createSession(ctx, d.Querier(), d.DBC(), user.ID)
+}
+
+func createSession(ctx context.Context, q db.Querier, dbtx db.DBTX, userID int64) (string, error) {
 	uuid := uuid.New().String()
 
-	_, err = d.Querier().CreateSession(ctx, tx, db.CreateSessionParams{
+	_, err := q.CreateSession(ctx, dbtx, db.CreateSessionParams{
 		UserID: userID,
 		Token:  uuid,
 	})

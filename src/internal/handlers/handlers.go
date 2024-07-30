@@ -39,6 +39,45 @@ func HandleIndex() http.HandlerFunc {
 	}
 }
 
+func HandleLoginPage() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := views.Login().Render(r.Context(), w); err != nil {
+			slog.Error(err.Error())
+			return
+		}
+	}
+}
+
+func HandleLoginForm(d dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+
+		if email == "" || password == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		token, err := ops.LoginUser(r.Context(), d, email, password)
+		if err != nil {
+			slog.Error(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		cookie := http.Cookie{
+			Name:     "token",
+			Value:    token,
+			HttpOnly: true,
+			Path:     "/",
+			Expires:  time.Now().Add(time.Hour * 24 * 7),
+		}
+
+		http.SetCookie(w, &cookie)
+		w.Header().Set("HX-Redirect", "/")
+	}
+}
+
 func HandleSignupPage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := views.Signup().Render(r.Context(), w); err != nil {

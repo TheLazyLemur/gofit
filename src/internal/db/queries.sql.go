@@ -43,6 +43,28 @@ func (q *Queries) CreateUser(ctx context.Context, db DBTX, arg CreateUserParams)
 	return id, err
 }
 
+const getUserByEmailAndPassword = `-- name: GetUserByEmailAndPassword :one
+SELECT id, name, email, password_hash, created_at FROM users WHERE email = ? AND password_hash = ? LIMIT 1
+`
+
+type GetUserByEmailAndPasswordParams struct {
+	Email        string
+	PasswordHash string
+}
+
+func (q *Queries) GetUserByEmailAndPassword(ctx context.Context, db DBTX, arg GetUserByEmailAndPasswordParams) (User, error) {
+	row := db.QueryRowContext(ctx, getUserByEmailAndPassword, arg.Email, arg.PasswordHash)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.PasswordHash,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const joinSessionByUserId = `-- name: JoinSessionByUserId :one
 SELECT sessions.id, user_id, token, sessions.created_at, users.id, name, email, password_hash, users.created_at FROM sessions JOIN users ON sessions.user_id = users.id WHERE sessions.token = ? LIMIT 1
 `

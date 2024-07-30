@@ -28,16 +28,14 @@ func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, err := r.Cookie("token")
 			if err != nil && err == http.ErrNoCookie {
-				ctx := context.WithValue(r.Context(), "user", nil)
-				h.ServeHTTP(w, r.WithContext(ctx))
+				h.ServeHTTP(w, r)
 				return
 			}
 
 			res, err := deps.Querier().JoinSessionByUserId(r.Context(), deps.DBC(), token.Value)
 			if err != nil {
 				slog.Error("Error getting user", "err", err)
-				ctx := context.WithValue(r.Context(), "user", nil)
-				h.ServeHTTP(w, r.WithContext(ctx))
+				h.ServeHTTP(w, r)
 				return
 			}
 
@@ -68,8 +66,12 @@ func NewServer(port string, deps dependencies) *Server {
 
 func MountRoutes(s *Server) {
 	s.r.Get("/health", handlers.HandleHealthCheck(s.deps))
+
 	s.r.Get("/auth/signup", handlers.HandleSignupPage())
 	s.r.Post("/auth/signup", handlers.HandleSignupForm(s.deps))
+
+	s.r.Get("/auth/login", handlers.HandleLoginPage())
+	s.r.Post("/auth/login", handlers.HandleLoginForm(s.deps))
 
 	s.r.Group(func(r *router.Router) {
 		r.Use(AuthMaybeRequiredMW(s.deps))

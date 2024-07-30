@@ -57,7 +57,7 @@ func Home() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a hx-boost=\"true\" href=\"/auth/signup\">Sign up</a>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a hx-boost=\"true\" href=\"/auth/signup\">Sign up</a> <a hx-boost=\"true\" href=\"/auth/login\">Log in</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
