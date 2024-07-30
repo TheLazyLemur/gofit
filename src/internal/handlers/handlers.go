@@ -138,12 +138,6 @@ func HandleLogout(d dependencies) http.HandlerFunc {
 
 func HandleMeasure(deps dependencies) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Context().Value("user").(db.User)
-		if !ok {
-			doRedirect(w, r, "/auth/login")
-			return
-		}
-
 		if err := views.Measure().Render(r.Context(), w); err != nil {
 			slog.Error(err.Error())
 			return

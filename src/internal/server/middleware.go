@@ -8,6 +8,37 @@ import (
 	"github.com/TheLazyLemur/gofit/src/internal/db"
 )
 
+func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			token, err := r.Cookie("token")
+			if err != nil && err == http.ErrNoCookie {
+				isHTMX := r.Header.Get("HX-Request") == "true"
+				if isHTMX {
+					w.Header().Set("HX-Redirect", "/auth/login")
+				} else {
+					http.Redirect(w, r, "/auth/login", http.StatusFound)
+				}
+				return
+			}
+
+			res, err := deps.Querier().JoinSessionByUserId(r.Context(), deps.DBC(), token.Value)
+			if err != nil {
+				slog.Error("Error getting user", "err", err)
+				isHTMX := r.Header.Get("HX-Request") == "true"
+				if isHTMX {
+					w.Header().Set("HX-Redirect", "/auth/login")
+				} else {
+					http.Redirect(w, r, "/auth/login", http.StatusFound)
+				}
+				return
+			}
+
+			serverWithUser(r, w, h, res)
+		})
+	}
+}
+
 func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -24,14 +55,19 @@ func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 				return
 			}
 
-			user := db.User{
-				ID:        res.ID,
-				Name:      res.Name,
-				Email:     res.Email,
-				CreatedAt: res.CreatedAt,
-			}
-			ctx := context.WithValue(r.Context(), "user", user)
-			h.ServeHTTP(w, r.WithContext(ctx))
+			serverWithUser(r, w, h, res)
 		})
 	}
+}
+
+func serverWithUser(r *http.Request, w http.ResponseWriter, h http.Handler, res db.JoinSessionByUserIdRow) {
+	user := db.User{
+		ID:        res.ID,
+		Name:      res.Name,
+		Email:     res.Email,
+		CreatedAt: res.CreatedAt,
+	}
+
+	ctx := context.WithValue(r.Context(), "user", user)
+	h.ServeHTTP(w, r.WithContext(ctx))
 }
