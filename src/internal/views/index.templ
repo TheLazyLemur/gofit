@@ -1,0 +1,12 @@
+package views
+
+templ Home() {
+	@Layout() {
+		if user, ok := getLoggedInUser(ctx); ok {
+			<h1>Dashboard </h1>
+			<h1>Hello, { user.Name }</h1>
+		} else {
+			<a hx-boost="true" href="/auth/signup">Sign up</a>
+		}
+	}
+}
