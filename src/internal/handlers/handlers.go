@@ -74,7 +74,7 @@ func HandleLoginForm(d dependencies) http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &cookie)
-		w.Header().Set("HX-Redirect", "/")
+		doRedirect(w, r, "/")
 	}
 }
 
@@ -114,7 +114,7 @@ func HandleSignupForm(d dependencies) http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &cookie)
-		w.Header().Set("HX-Redirect", "/")
+		doRedirect(w, r, "/")
 	}
 }
 
@@ -122,7 +122,7 @@ func HandleMeasure(deps dependencies) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, ok := r.Context().Value("user").(db.User)
 		if !ok {
-			w.Header().Set("HX-Redirect", "/auth/login")
+			doRedirect(w, r, "/auth/login")
 			return
 		}
 

@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -12,7 +11,6 @@ import (
 func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("auth maybe required")
 			token, err := r.Cookie("token")
 			if err != nil && err == http.ErrNoCookie {
 				h.ServeHTTP(w, r)

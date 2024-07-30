@@ -10,7 +10,7 @@ templ Layout() {
 			<script src="https://cdn.tailwindcss.com"></script>
 			<title>Go Fit</title>
 		</head>
-		<body class="flex h-screen overflow-hidden">
+		<body hx-boost="true" class="flex h-screen overflow-hidden">
 			<div class="flex h-screen w-16 flex-col justify-between border-e bg-white">
 				<div>
 					<div class="inline-flex size-16 items-center justify-center">
@@ -24,7 +24,6 @@ templ Layout() {
 								<li>
 									<a
 										href="/"
-										hx-boost="true"
 										class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
 									>
 										<svg class="size-5 opacity-75" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -84,7 +83,6 @@ templ Layout() {
 								</li>
 								<li>
 									<a
-										hx-boost="true"
 										href="/measure"
 										class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
 									>
