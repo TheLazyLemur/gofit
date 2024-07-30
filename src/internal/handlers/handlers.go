@@ -118,6 +118,24 @@ func HandleSignupForm(d dependencies) http.HandlerFunc {
 	}
 }
 
+func HandleLogout(d dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cookie := http.Cookie{
+			Name:     "token",
+			Value:    "",
+			HttpOnly: true,
+			Path:     "/",
+			Expires:  time.Now().Add(time.Hour * -24 * 7),
+		}
+
+		//TODO: remove token from DB
+
+		http.SetCookie(w, &cookie)
+		doRedirect(w, r, "/")
+
+	}
+}
+
 func HandleMeasure(deps dependencies) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, ok := r.Context().Value("user").(db.User)
