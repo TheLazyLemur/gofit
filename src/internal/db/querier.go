@@ -11,6 +11,7 @@ import (
 type Querier interface {
 	CreateSession(ctx context.Context, db DBTX, arg CreateSessionParams) (int64, error)
 	CreateUser(ctx context.Context, db DBTX, arg CreateUserParams) (int64, error)
+	DeleteSession(ctx context.Context, db DBTX, token string) error
 	GetUserByEmailAndPassword(ctx context.Context, db DBTX, arg GetUserByEmailAndPasswordParams) (User, error)
 	JoinSessionByUserId(ctx context.Context, db DBTX, token string) (JoinSessionByUserIdRow, error)
 	// SQLite3 queries.

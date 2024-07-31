@@ -120,6 +120,18 @@ func HandleSignupForm(d dependencies) http.HandlerFunc {
 
 func HandleLogout(d dependencies) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		token, ok := r.Context().Value("token").(string)
+		if !ok {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if err := d.Querier().DeleteSession(r.Context(), d.DBC(), token); err != nil {
+			slog.Error(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
 		cookie := http.Cookie{
 			Name:     "token",
 			Value:    "",
@@ -127,8 +139,6 @@ func HandleLogout(d dependencies) http.HandlerFunc {
 			Path:     "/",
 			Expires:  time.Now().Add(time.Hour * -24 * 7),
 		}
-
-		//TODO: remove token from DB
 
 		http.SetCookie(w, &cookie)
 		doRedirect(w, r, "/")

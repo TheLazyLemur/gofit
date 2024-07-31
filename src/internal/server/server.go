@@ -43,7 +43,6 @@ func MountRoutes(s *Server) {
 
 	s.r.Get("/auth/login", handlers.HandleLoginPage())
 	s.r.Post("/auth/login", handlers.HandleLoginForm(s.deps))
-	s.r.Get("/auth/logout", handlers.HandleLogout(s.deps))
 
 	s.r.Group(func(r *router.Router) {
 		r.Use(AuthMaybeRequiredMW(s.deps))
@@ -53,6 +52,7 @@ func MountRoutes(s *Server) {
 	s.r.Group(func(r *router.Router) {
 		r.Use(MustAuthMW(s.deps))
 		r.Get("/measure", handlers.HandleMeasure(s.deps))
+		r.Get("/auth/logout", handlers.HandleLogout(s.deps))
 	})
 }
 

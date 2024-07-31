@@ -43,6 +43,15 @@ func (q *Queries) CreateUser(ctx context.Context, db DBTX, arg CreateUserParams)
 	return id, err
 }
 
+const deleteSession = `-- name: DeleteSession :exec
+DELETE FROM sessions WHERE token = ?
+`
+
+func (q *Queries) DeleteSession(ctx context.Context, db DBTX, token string) error {
+	_, err := db.ExecContext(ctx, deleteSession, token)
+	return err
+}
+
 const getUserByEmailAndPassword = `-- name: GetUserByEmailAndPassword :one
 SELECT id, name, email, password_hash, created_at FROM users WHERE email = ? AND password_hash = ? LIMIT 1
 `

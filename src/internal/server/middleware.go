@@ -34,7 +34,7 @@ func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
 				return
 			}
 
-			serverWithUser(r, w, h, res)
+			serverWithUser(r, w, h, token.Value, res)
 		})
 	}
 }
@@ -55,12 +55,12 @@ func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 				return
 			}
 
-			serverWithUser(r, w, h, res)
+			serverWithUser(r, w, h, token.Value, res)
 		})
 	}
 }
 
-func serverWithUser(r *http.Request, w http.ResponseWriter, h http.Handler, res db.JoinSessionByUserIdRow) {
+func serverWithUser(r *http.Request, w http.ResponseWriter, h http.Handler, token string, res db.JoinSessionByUserIdRow) {
 	user := db.User{
 		ID:        res.ID,
 		Name:      res.Name,
@@ -69,5 +69,6 @@ func serverWithUser(r *http.Request, w http.ResponseWriter, h http.Handler, res 
 	}
 
 	ctx := context.WithValue(r.Context(), "user", user)
-	h.ServeHTTP(w, r.WithContext(ctx))
+	newCtx := context.WithValue(ctx, "token", token)
+	h.ServeHTTP(w, r.WithContext(newCtx))
 }
