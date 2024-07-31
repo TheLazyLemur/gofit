@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/TheLazyLemur/gofit"
 	"github.com/TheLazyLemur/gofit/src/internal/db"
 	"github.com/TheLazyLemur/gofit/src/internal/handlers"
 	"github.com/TheLazyLemur/gofit/src/router"
@@ -55,6 +56,9 @@ func MountRoutes(s *Server) {
 		r.Post("/measure/weight", handlers.HandleMeasureWeightForm(s.deps))
 		r.Get("/auth/logout", handlers.HandleLogout(s.deps))
 	})
+
+	staticFS := http.FS(gofit.Static)
+	s.r.Handle("GET /static/*", http.FileServer(staticFS))
 }
 
 func Start(s *Server) error {
