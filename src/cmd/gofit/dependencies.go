@@ -13,7 +13,8 @@ type dependencies struct {
 
 func (d *dependencies) DBC() *sql.DB {
 	newConn := func() *sql.DB {
-		dbc, err := sql.Open("sqlite3", "file:memdb1?mode=memory&cache=shared")
+		// dbc, err := sql.Open("sqlite3", "file:memdb1?mode=memory&cache=shared")
+		dbc, err := sql.Open("sqlite3", "file.db")
 		if err != nil {
 			panic(err)
 		}

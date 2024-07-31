@@ -51,6 +51,7 @@ func MountRoutes(s *Server) {
 	s.r.Group(func(r *router.Router) {
 		r.Use(handlers.MustAuthMW(s.deps))
 		r.Get("/measure", handlers.HandleMeasure(s.deps))
+		r.Get("/measure/weight", handlers.HandleMeasureWeight(s.deps))
 		r.Get("/auth/logout", handlers.HandleLogout(s.deps))
 	})
 }

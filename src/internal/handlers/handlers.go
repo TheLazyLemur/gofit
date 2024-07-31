@@ -144,3 +144,12 @@ func HandleMeasure(deps dependencies) http.HandlerFunc {
 		}
 	}
 }
+
+func HandleMeasureWeight(deps dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := views.Weight().Render(r.Context(), w); err != nil {
+			slog.Error(err.Error())
+			return
+		}
+	}
+}
