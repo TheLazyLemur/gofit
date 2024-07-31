@@ -18,3 +18,6 @@ SELECT * FROM sessions JOIN users ON sessions.user_id = users.id WHERE sessions.
 
 -- name: DeleteSession :exec
 DELETE FROM sessions WHERE token = ?;
+
+-- name: CreateUserWeight :exec
+INSERT INTO user_weight (user_id, weight) VALUES (?, ?);

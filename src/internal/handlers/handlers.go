@@ -153,3 +153,8 @@ func HandleMeasureWeight(deps dependencies) http.HandlerFunc {
 		}
 	}
 }
+
+func HandleMeasureWeightForm(deps dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+	}
+}

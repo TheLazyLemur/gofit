@@ -52,6 +52,7 @@ func MountRoutes(s *Server) {
 		r.Use(handlers.MustAuthMW(s.deps))
 		r.Get("/measure", handlers.HandleMeasure(s.deps))
 		r.Get("/measure/weight", handlers.HandleMeasureWeight(s.deps))
+		r.Post("/measure/weight", handlers.HandleMeasureWeightForm(s.deps))
 		r.Get("/auth/logout", handlers.HandleLogout(s.deps))
 	})
 }
