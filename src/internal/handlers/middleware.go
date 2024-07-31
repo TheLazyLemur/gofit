@@ -1,4 +1,4 @@
-package server
+package handlers
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/TheLazyLemur/gofit/src/internal/db"
-	"github.com/TheLazyLemur/gofit/src/internal/handlers"
 )
 
 func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
@@ -14,7 +13,7 @@ func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, err := r.Cookie("token")
 			if err != nil && err == http.ErrNoCookie {
-				handlers.HTMXRedirect(w, r, "/auth/login")
+				HTMXRedirect(w, r, "/auth/login")
 				return
 			}
 
@@ -22,8 +21,8 @@ func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
 			if err != nil {
 				slog.Error("Error getting user", "err", err)
 
-				handlers.ResetTokenCookie(w)
-				handlers.HTMXRedirect(w, r, "/auth/login")
+				ResetTokenCookie(w)
+				HTMXRedirect(w, r, "/auth/login")
 				return
 			}
 
@@ -45,7 +44,7 @@ func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 			if err != nil {
 				slog.Error("Error getting user", "err", err)
 
-				handlers.ResetTokenCookie(w)
+				ResetTokenCookie(w)
 				h.ServeHTTP(w, r)
 				return
 			}
