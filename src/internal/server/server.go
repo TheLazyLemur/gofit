@@ -8,7 +8,7 @@ import (
 	"github.com/TheLazyLemur/gofit"
 	"github.com/TheLazyLemur/gofit/src/internal/db"
 	"github.com/TheLazyLemur/gofit/src/internal/handlers"
-	"github.com/TheLazyLemur/gofit/src/router"
+	"github.com/go-chi/chi/v5"
 )
 
 type dependencies interface {
@@ -18,7 +18,7 @@ type dependencies interface {
 
 type Server struct {
 	port string
-	r    *router.Router
+	r    *chi.Mux
 	deps dependencies
 }
 
@@ -27,7 +27,7 @@ func NewServer(port string, deps dependencies) *Server {
 		port = ":" + port
 	}
 
-	r := router.NewRouter()
+	r := chi.NewRouter()
 	return &Server{
 		port: port,
 		r:    r,
@@ -44,14 +44,14 @@ func MountRoutes(s *Server) {
 	s.r.Get("/auth/login", handlers.HandleLoginPage())
 	s.r.Post("/auth/login", handlers.HandleLoginForm(s.deps))
 
-	s.r.Group(func(r *router.Router) {
+	s.r.Group(func(r chi.Router) {
 		r.Use(handlers.AuthMaybeRequiredMW(s.deps))
 		r.Get("/", handlers.HandleIndex())
 	})
 
-	s.r.Group(func(r *router.Router) {
+	s.r.Group(func(r chi.Router) {
 		r.Use(handlers.MustAuthMW(s.deps))
-		r.Get("/measure", handlers.HandleMeasure(s.deps))
+		r.Get("/measure/", handlers.HandleMeasure(s.deps))
 		r.Get("/measure/weight", handlers.HandleMeasureWeight(s.deps))
 		r.Post("/measure/weight", handlers.HandleMeasureWeightForm(s.deps))
 		r.Get("/auth/logout", handlers.HandleLogout(s.deps))
