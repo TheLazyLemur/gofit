@@ -5,14 +5,18 @@ import (
 
 	"github.com/TheLazyLemur/gofit"
 	"github.com/TheLazyLemur/gofit/src/internal/server"
+	"github.com/joho/godotenv"
 
 	_ "embed"
-
-	_ "github.com/mattn/go-sqlite3"
 )
+
+func loadEnv() {
+	godotenv.Load()
+}
 
 func main() {
 	flag.Parse()
+	loadEnv()
 
 	deps := &dependencies{}
 	defer deps.Close()

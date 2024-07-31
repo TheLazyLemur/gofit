@@ -2,8 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"log/slog"
+	"os"
 
 	"github.com/TheLazyLemur/gofit/src/internal/db"
+
+	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 type dependencies struct {
@@ -13,8 +18,13 @@ type dependencies struct {
 
 func (d *dependencies) DBC() *sql.DB {
 	newConn := func() *sql.DB {
-		// dbc, err := sql.Open("sqlite3", "file:memdb1?mode=memory&cache=shared")
-		dbc, err := sql.Open("sqlite3", "file.db")
+		dbURL := os.Getenv("GOFIT_DB_URL")
+		if dbURL == "" {
+			slog.Warn("GOFIT_DB_URL is not set, using in-memory database")
+			dbURL = "file:memdb1?mode=memory&cache=shared"
+		}
+
+		dbc, err := sql.Open("libsql", dbURL)
 		if err != nil {
 			panic(err)
 		}
