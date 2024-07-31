@@ -21,11 +21,13 @@ func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
 			res, err := deps.Querier().JoinSessionByUserId(r.Context(), deps.DBC(), token.Value)
 			if err != nil {
 				slog.Error("Error getting user", "err", err)
+
+				handlers.ResetTokenCookie(w)
 				handlers.HTMXRedirect(w, r, "/auth/login")
 				return
 			}
 
-			serverWithUser(r, w, h, token.Value, res)
+			serveWithUser(r, w, h, token.Value, res)
 		})
 	}
 }
@@ -42,16 +44,18 @@ func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 			res, err := deps.Querier().JoinSessionByUserId(r.Context(), deps.DBC(), token.Value)
 			if err != nil {
 				slog.Error("Error getting user", "err", err)
+
+				handlers.ResetTokenCookie(w)
 				h.ServeHTTP(w, r)
 				return
 			}
 
-			serverWithUser(r, w, h, token.Value, res)
+			serveWithUser(r, w, h, token.Value, res)
 		})
 	}
 }
 
-func serverWithUser(r *http.Request, w http.ResponseWriter, h http.Handler, token string, res db.JoinSessionByUserIdRow) {
+func serveWithUser(r *http.Request, w http.ResponseWriter, h http.Handler, token string, res db.JoinSessionByUserIdRow) {
 	user := db.User{
 		ID:        res.ID,
 		Name:      res.Name,

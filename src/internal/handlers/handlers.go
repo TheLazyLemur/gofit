@@ -132,15 +132,7 @@ func HandleLogout(d dependencies) http.HandlerFunc {
 			return
 		}
 
-		cookie := http.Cookie{
-			Name:     "token",
-			Value:    "",
-			HttpOnly: true,
-			Path:     "/",
-			Expires:  time.Now().Add(time.Hour * -24 * 7),
-		}
-
-		http.SetCookie(w, &cookie)
+		ResetTokenCookie(w)
 		HTMXRedirect(w, r, "/")
 
 	}
