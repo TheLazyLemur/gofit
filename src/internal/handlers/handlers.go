@@ -74,7 +74,7 @@ func HandleLoginForm(d dependencies) http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &cookie)
-		doRedirect(w, r, "/")
+		HTMXRedirect(w, r, "/")
 	}
 }
 
@@ -114,7 +114,7 @@ func HandleSignupForm(d dependencies) http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &cookie)
-		doRedirect(w, r, "/")
+		HTMXRedirect(w, r, "/")
 	}
 }
 
@@ -141,7 +141,7 @@ func HandleLogout(d dependencies) http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &cookie)
-		doRedirect(w, r, "/")
+		HTMXRedirect(w, r, "/")
 
 	}
 }

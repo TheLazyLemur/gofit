@@ -16,7 +16,7 @@ import (
 func main() {
 	flag.Parse()
 
-	dbc, err := sql.Open("sqlite3", "./file.db")
+	dbc, err := sql.Open("sqlite3", "file:memdb1?mode=memory&cache=shared")
 	if err != nil {
 		panic(err)
 	}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/TheLazyLemur/gofit/src/internal/db"
+	"github.com/TheLazyLemur/gofit/src/internal/handlers"
 )
 
 func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
@@ -13,24 +14,14 @@ func MustAuthMW(deps dependencies) func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, err := r.Cookie("token")
 			if err != nil && err == http.ErrNoCookie {
-				isHTMX := r.Header.Get("HX-Request") == "true"
-				if isHTMX {
-					w.Header().Set("HX-Redirect", "/auth/login")
-				} else {
-					http.Redirect(w, r, "/auth/login", http.StatusFound)
-				}
+				handlers.HTMXRedirect(w, r, "/auth/login")
 				return
 			}
 
 			res, err := deps.Querier().JoinSessionByUserId(r.Context(), deps.DBC(), token.Value)
 			if err != nil {
 				slog.Error("Error getting user", "err", err)
-				isHTMX := r.Header.Get("HX-Request") == "true"
-				if isHTMX {
-					w.Header().Set("HX-Redirect", "/auth/login")
-				} else {
-					http.Redirect(w, r, "/auth/login", http.StatusFound)
-				}
+				handlers.HTMXRedirect(w, r, "/auth/login")
 				return
 			}
 
