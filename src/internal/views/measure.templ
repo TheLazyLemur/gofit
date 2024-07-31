@@ -1,5 +1,10 @@
 package views
 
+import (
+	"fmt"
+	"github.com/TheLazyLemur/gofit/src/internal/db"
+)
+
 templ Measure() {
 	@Layout() {
 		<h1>Measure</h1>
@@ -17,7 +22,7 @@ templ Measure() {
 	}
 }
 
-templ Weight() {
+templ Weight(weights []db.UserWeight) {
 	@Layout() {
 		<h1 class="text-xl">Weight</h1>
 		<div class="mt-5 w-full h-[40%] bg-gray-300 rounded-lg flex">
@@ -29,8 +34,24 @@ templ Weight() {
 				@WeightModal()
 			</div>
 		</div>
-		<div id="weight-list"></div>
+		<div id="weight-list">
+			for _, weight := range weights {
+				@WeightEntry(weight)
+			}
+		</div>
 	}
+}
+
+templ WeightEntry(weight db.UserWeight) {
+	<div class="flex justify-between max-w-xl">
+		<div class="flex space-x-2">
+			{ fmt.Sprintf("%d", weight.CreatedAt.Day()) }
+			{ fmt.Sprintf("%s", weight.CreatedAt.Month().String()) }
+		</div>
+		<div>
+			{ fmt.Sprintf("%v", weight.Weight) }
+		</div>
+	</div>
 }
 
 templ WeightModal() {

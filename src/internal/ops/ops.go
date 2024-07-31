@@ -54,6 +54,10 @@ func CreateUserWeight(ctx context.Context, dbc *sql.DB, querier db.Querier, user
 	})
 }
 
+func GetUserWeightHistory(ctx context.Context, dbc *sql.DB, querier db.Querier, userID int64) ([]db.UserWeight, error) {
+	return querier.GetUserWeightHistory(ctx, dbc, userID)
+}
+
 func createSession(ctx context.Context, q db.Querier, dbtx db.DBTX, userID int64) (string, error) {
 	uuid := uuid.New().String()
 

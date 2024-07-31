@@ -89,6 +89,33 @@ func (q *Queries) GetUserByEmailAndPassword(ctx context.Context, db DBTX, arg Ge
 	return i, err
 }
 
+const getUserWeightHistory = `-- name: GetUserWeightHistory :many
+SELECT user_id, weight, created_at FROM user_weight WHERE user_id = ?
+`
+
+func (q *Queries) GetUserWeightHistory(ctx context.Context, db DBTX, userID int64) ([]UserWeight, error) {
+	rows, err := db.QueryContext(ctx, getUserWeightHistory, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UserWeight
+	for rows.Next() {
+		var i UserWeight
+		if err := rows.Scan(&i.UserID, &i.Weight, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const joinSessionByUserId = `-- name: JoinSessionByUserId :one
 SELECT sessions.id, user_id, token, sessions.created_at, users.id, name, email, password_hash, users.created_at FROM sessions JOIN users ON sessions.user_id = users.id WHERE sessions.token = ? LIMIT 1
 `

@@ -14,6 +14,7 @@ type Querier interface {
 	CreateUserWeight(ctx context.Context, db DBTX, arg CreateUserWeightParams) error
 	DeleteSession(ctx context.Context, db DBTX, token string) error
 	GetUserByEmailAndPassword(ctx context.Context, db DBTX, arg GetUserByEmailAndPasswordParams) (User, error)
+	GetUserWeightHistory(ctx context.Context, db DBTX, userID int64) ([]UserWeight, error)
 	JoinSessionByUserId(ctx context.Context, db DBTX, token string) (JoinSessionByUserIdRow, error)
 	// SQLite3 queries.
 	// All queries should be idempotent.

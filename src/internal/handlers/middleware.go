@@ -56,7 +56,7 @@ func AuthMaybeRequiredMW(deps dependencies) func(h http.Handler) http.Handler {
 
 func serveWithUser(r *http.Request, w http.ResponseWriter, h http.Handler, token string, res db.JoinSessionByUserIdRow) {
 	user := db.User{
-		ID:        res.ID,
+		ID:        res.UserID,
 		Name:      res.Name,
 		Email:     res.Email,
 		CreatedAt: res.CreatedAt,

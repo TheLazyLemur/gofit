@@ -21,3 +21,6 @@ DELETE FROM sessions WHERE token = ?;
 
 -- name: CreateUserWeight :exec
 INSERT INTO user_weight (user_id, weight, created_at) VALUES (?, ?, ?);
+
+-- name: GetUserWeightHistory :many
+SELECT * FROM user_weight WHERE user_id = ?;

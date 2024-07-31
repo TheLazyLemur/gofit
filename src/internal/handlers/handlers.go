@@ -148,7 +148,20 @@ func HandleMeasure(deps dependencies) http.HandlerFunc {
 
 func HandleMeasureWeight(deps dependencies) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := views.Weight().Render(r.Context(), w); err != nil {
+		user, ok := r.Context().Value("user").(db.User)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		weights, err := ops.GetUserWeightHistory(r.Context(), deps.DBC(), deps.Querier(), user.ID)
+		if err != nil {
+			slog.Error(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if err := views.Weight(weights).Render(r.Context(), w); err != nil {
 			slog.Error(err.Error())
 			return
 		}
@@ -157,6 +170,11 @@ func HandleMeasureWeight(deps dependencies) http.HandlerFunc {
 
 func HandleMeasureWeightForm(deps dependencies) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		user, ok := r.Context().Value("user").(db.User)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 
 		weight := r.FormValue("weight")
 		date := r.FormValue("date")
@@ -175,18 +193,18 @@ func HandleMeasureWeightForm(deps dependencies) http.HandlerFunc {
 			return
 		}
 
-		user, ok := r.Context().Value("user").(db.User)
-		if !ok {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
 		if err := ops.CreateUserWeight(r.Context(), deps.DBC(), deps.Querier(), user.ID, parsedWeight, parsedDate); err != nil {
 			slog.Error(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		w.Write([]byte("ok"))
+		if err := views.WeightEntry(db.UserWeight{
+			Weight:    parsedWeight,
+			CreatedAt: parsedDate,
+		}).Render(r.Context(), w); err != nil {
+			slog.Error(err.Error())
+			return
+		}
 	}
 }
