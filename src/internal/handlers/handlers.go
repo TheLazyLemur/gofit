@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/TheLazyLemur/gofit/src/internal/db"
@@ -156,5 +157,36 @@ func HandleMeasureWeight(deps dependencies) http.HandlerFunc {
 
 func HandleMeasureWeightForm(deps dependencies) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		weight := r.FormValue("weight")
+		date := r.FormValue("date")
+
+		parsedDate, err := time.Parse("2006-01-02", date)
+		if err != nil {
+			slog.Error(err.Error())
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		parsedWeight, err := strconv.ParseFloat(weight, 64)
+		if err != nil {
+			slog.Error(err.Error())
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		user, ok := r.Context().Value("user").(db.User)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		if err := ops.CreateUserWeight(r.Context(), deps.DBC(), deps.Querier(), user.ID, parsedWeight, parsedDate); err != nil {
+			slog.Error(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.Write([]byte("ok"))
 	}
 }

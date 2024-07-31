@@ -3,6 +3,7 @@ package ops
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/TheLazyLemur/gofit/src/internal/db"
 	"github.com/google/uuid"
@@ -43,6 +44,14 @@ func LoginUser(ctx context.Context, dbc *sql.DB, querier db.Querier, email, pass
 	}
 
 	return createSession(ctx, querier, dbc, user.ID)
+}
+
+func CreateUserWeight(ctx context.Context, dbc *sql.DB, querier db.Querier, userID int64, weight float64, date time.Time) (err error) {
+	return querier.CreateUserWeight(ctx, dbc, db.CreateUserWeightParams{
+		UserID:    userID,
+		Weight:    weight,
+		CreatedAt: date,
+	})
 }
 
 func createSession(ctx context.Context, q db.Querier, dbtx db.DBTX, userID int64) (string, error) {

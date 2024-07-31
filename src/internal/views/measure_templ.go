@@ -90,7 +90,7 @@ func Weight() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div id=\"weight-list\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -122,7 +122,7 @@ func WeightModal() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<cmp-modal x-data=\"{ open: false }\"><button x-on:click=\"open = ! open\" class=\"text-3xl\">+ </button><article x-show=\"open\" class=\"fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 w-full flex flex-col\"><div @click.outside=\"open = false\" class=\"flex flex-col space-y-5 w-full max-w-xl justify-between bg-white m-auto p-10\"><div class=\"grid grid-cols-2\"><h3 class=\"my-auto\">Weight </h3><input type=\"date\" class=\"w-full my-auto\"></div><div><input type=\"number\" class=\"w-full mt-2 p-4 border border-gray-300\"></div><div class=\"grid grid-cols-3\"><div></div><div></div><div class=\"grid grid-cols-2\"><button class=\"w-full p-2 text-center\">Save</button> <button x-on:click=\"open = false\" class=\"w-full p-2 text-center\">Cancel</button></div></div></div></article></cmp-modal>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<cmp-modal x-data=\"{ open: false }\"><button x-on:click=\"open = ! open\" class=\"text-3xl\">+ </button><article x-show=\"open\" class=\"fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 w-full flex flex-col\"><div @click.outside=\"open = false\" class=\"flex flex-col space-y-5 w-full max-w-xl justify-between bg-white m-auto p-10\"><form hx-post=\"/measure/weight\" hx-target=\"#weight-list\" hx-swap=\"beforeend\"><div class=\"grid grid-cols-2\"><h3 class=\"my-auto\">Weight </h3><input name=\"date\" type=\"date\" class=\"w-full my-auto\"></div><div><input type=\"number\" name=\"weight\" class=\"w-full mt-5 p-4 border border-gray-300\"></div><div class=\"grid grid-cols-3\"><div></div><div></div><div class=\"grid grid-cols-2 mt-5\"><div></div><button class=\"w-full p-2 text-center\">Save</button></div></div></form></div></article></cmp-modal>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

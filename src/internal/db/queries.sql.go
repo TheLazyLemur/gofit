@@ -44,16 +44,17 @@ func (q *Queries) CreateUser(ctx context.Context, db DBTX, arg CreateUserParams)
 }
 
 const createUserWeight = `-- name: CreateUserWeight :exec
-INSERT INTO user_weight (user_id, weight) VALUES (?, ?)
+INSERT INTO user_weight (user_id, weight, created_at) VALUES (?, ?, ?)
 `
 
 type CreateUserWeightParams struct {
-	UserID int64
-	Weight float64
+	UserID    int64
+	Weight    float64
+	CreatedAt time.Time
 }
 
 func (q *Queries) CreateUserWeight(ctx context.Context, db DBTX, arg CreateUserWeightParams) error {
-	_, err := db.ExecContext(ctx, createUserWeight, arg.UserID, arg.Weight)
+	_, err := db.ExecContext(ctx, createUserWeight, arg.UserID, arg.Weight, arg.CreatedAt)
 	return err
 }
 
