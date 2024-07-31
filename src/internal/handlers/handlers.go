@@ -14,7 +14,6 @@ import (
 type dependencies interface {
 	DBC() *sql.DB
 	Querier() db.Querier
-	VersionChecker() string
 }
 
 func HandleHealthCheck(d dependencies) http.HandlerFunc {
@@ -26,7 +25,6 @@ func HandleHealthCheck(d dependencies) http.HandlerFunc {
 		}
 
 		w.Write([]byte("OK"))
-		w.Write([]byte(d.VersionChecker()))
 	}
 }
 
@@ -58,7 +56,7 @@ func HandleLoginForm(d dependencies) http.HandlerFunc {
 			return
 		}
 
-		token, err := ops.LoginUser(r.Context(), d, email, password)
+		token, err := ops.LoginUser(r.Context(), d.DBC(), d.Querier(), email, password)
 		if err != nil {
 			slog.Error(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
@@ -98,7 +96,7 @@ func HandleSignupForm(d dependencies) http.HandlerFunc {
 			return
 		}
 
-		token, err := ops.CreateUser(r.Context(), d, username, password, email)
+		token, err := ops.CreateUser(r.Context(), d.DBC(), d.Querier(), username, password, email)
 		if err != nil {
 			slog.Error(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)

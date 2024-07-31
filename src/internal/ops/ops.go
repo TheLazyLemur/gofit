@@ -8,13 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
-type dependencies interface {
-	DBC() *sql.DB
-	Querier() db.Querier
-}
-
-func CreateUser(ctx context.Context, d dependencies, username, password, email string) (token string, err error) {
-	tx, err := d.DBC().Begin()
+func CreateUser(ctx context.Context, dbc *sql.DB, querier db.Querier, username, password, email string) (token string, err error) {
+	tx, err := dbc.Begin()
 	if err != nil {
 		return "", err
 	}
@@ -26,7 +21,7 @@ func CreateUser(ctx context.Context, d dependencies, username, password, email s
 		}
 	}()
 
-	userID, err := d.Querier().CreateUser(ctx, d.DBC(), db.CreateUserParams{
+	userID, err := querier.CreateUser(ctx, dbc, db.CreateUserParams{
 		Name:         username,
 		Email:        email,
 		PasswordHash: password,
@@ -35,11 +30,11 @@ func CreateUser(ctx context.Context, d dependencies, username, password, email s
 		return "", err
 	}
 
-	return createSession(ctx, d.Querier(), tx, userID)
+	return createSession(ctx, querier, tx, userID)
 }
 
-func LoginUser(ctx context.Context, d dependencies, email, password string) (string, error) {
-	user, err := d.Querier().GetUserByEmailAndPassword(ctx, d.DBC(), db.GetUserByEmailAndPasswordParams{
+func LoginUser(ctx context.Context, dbc *sql.DB, querier db.Querier, email, password string) (string, error) {
+	user, err := querier.GetUserByEmailAndPassword(ctx, dbc, db.GetUserByEmailAndPasswordParams{
 		Email:        email,
 		PasswordHash: password,
 	})
@@ -47,7 +42,7 @@ func LoginUser(ctx context.Context, d dependencies, email, password string) (str
 		return "", err
 	}
 
-	return createSession(ctx, d.Querier(), d.DBC(), user.ID)
+	return createSession(ctx, querier, dbc, user.ID)
 }
 
 func createSession(ctx context.Context, q db.Querier, dbtx db.DBTX, userID int64) (string, error) {

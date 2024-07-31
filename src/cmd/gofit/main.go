@@ -1,11 +1,9 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
 
 	"github.com/TheLazyLemur/gofit"
-	"github.com/TheLazyLemur/gofit/src/internal/db"
 	"github.com/TheLazyLemur/gofit/src/internal/server"
 
 	_ "embed"
@@ -16,19 +14,13 @@ import (
 func main() {
 	flag.Parse()
 
-	dbc, err := sql.Open("sqlite3", "file:memdb1?mode=memory&cache=shared")
-	if err != nil {
-		panic(err)
-	}
-	defer dbc.Close()
+	deps := &dependencies{}
+	defer deps.Close()
+
+	dbc := deps.DBC()
 
 	if _, err := dbc.Exec(string(gofit.Schema)); err != nil {
 		panic(err)
-	}
-
-	deps := &dependencies{
-		dbc:     dbc,
-		querier: db.New(),
 	}
 
 	s := server.NewServer(":8080", deps)

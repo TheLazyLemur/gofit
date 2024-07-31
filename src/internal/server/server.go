@@ -13,7 +13,6 @@ import (
 type dependencies interface {
 	DBC() *sql.DB
 	Querier() db.Querier
-	VersionChecker() string
 }
 
 type Server struct {
@@ -58,6 +57,5 @@ func MountRoutes(s *Server) {
 
 func Start(s *Server) error {
 	slog.Info("Starting server", "port", s.port)
-
 	return http.ListenAndServe(s.port, s.r)
 }
