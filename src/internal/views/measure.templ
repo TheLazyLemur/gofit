@@ -15,7 +15,7 @@ templ Measure() {
 			<a hx-boost="true" href="/measure/bodyfat" class="hover:text-indigo-500 text-left">
 				<p>Body fat percentage</p>
 			</a>
-			<a hx-boost="true" href="/measure/calories" class="hover:text-indigo-500 text-left">
+			<a hx-boost="true" href="/measure/caloricintake" class="hover:text-indigo-500 text-left">
 				<p>Caloric intake</p>
 			</a>
 		</div>
@@ -39,7 +39,6 @@ templ Weight(weights []db.UserWeight) {
 				@WeightEntry(weight)
 			}
 		</div>
-		<cmp-test></cmp-test>
 	}
 }
 
@@ -53,6 +52,34 @@ templ WeightEntry(weight db.UserWeight) {
 			{ fmt.Sprintf("%v", weight.Weight) }
 		</div>
 	</div>
+}
+
+templ Bodyfat() {
+	@Layout() {
+		<h1 class="text-xl">Bodyfat percentage</h1>
+		<div class="mt-5 w-full h-[40%] bg-gray-300 rounded-lg flex">
+			<div class="m-auto">Not enough data</div>
+		</div>
+		<div class="max-w-xl flex justify-between mt-4">
+			<div>History </div>
+			<div></div>
+		</div>
+		<div id="bodyfat-list"></div>
+	}
+}
+
+templ CaloricIntake() {
+	@Layout() {
+		<h1 class="text-xl">Caloric intake</h1>
+		<div class="mt-5 w-full h-[40%] bg-gray-300 rounded-lg flex">
+			<div class="m-auto">Not enough data</div>
+		</div>
+		<div class="max-w-xl flex justify-between mt-4">
+			<div>History </div>
+			<div></div>
+		</div>
+		<div id="caloricintake-list"></div>
+	}
 }
 
 templ WeightModal() {

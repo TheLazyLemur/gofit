@@ -51,9 +51,11 @@ func MountRoutes(s *Server) {
 
 	s.r.Group(func(r chi.Router) {
 		r.Use(handlers.MustAuthMW(s.deps))
-		r.Get("/measure/", handlers.HandleMeasure(s.deps))
+		r.Get("/measure", handlers.HandleMeasure(s.deps))
 		r.Get("/measure/weight", handlers.HandleMeasureWeight(s.deps))
 		r.Post("/measure/weight", handlers.HandleMeasureWeightForm(s.deps))
+		r.Get("/measure/bodyfat", handlers.HandleMeasureBodyfat(s.deps))
+		r.Get("/measure/caloricintake", handlers.HandleMeasureCaloricIntake(s.deps))
 		r.Get("/auth/logout", handlers.HandleLogout(s.deps))
 	})
 

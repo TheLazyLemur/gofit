@@ -208,3 +208,37 @@ func HandleMeasureWeightForm(deps dependencies) http.HandlerFunc {
 		}
 	}
 }
+
+func HandleMeasureBodyfat(deps dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, ok := r.Context().Value("user").(db.User)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		_ = user
+
+		if err := views.Bodyfat().Render(r.Context(), w); err != nil {
+			slog.Error(err.Error())
+			return
+		}
+	}
+}
+
+func HandleMeasureCaloricIntake(deps dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, ok := r.Context().Value("user").(db.User)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		_ = user
+
+		if err := views.CaloricIntake().Render(r.Context(), w); err != nil {
+			slog.Error(err.Error())
+			return
+		}
+	}
+}
